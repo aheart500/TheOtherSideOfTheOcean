@@ -1,38 +1,217 @@
-.App {
-  text-align: center;
+:root {
+  --back-color: white;
+  --front-color: white;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+a {
+  text-decoration: none;
+  color: inherit;
+}
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: var(--back-color);
+  color: var(--front-color);
+}
+/* Animations*/
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 rgb(5, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0.7rem transparent;
   }
 }
+.pulse:hover,
+.pulse:focus {
+  animation: pulse 0.6s;
+}
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.fill:hover {
+  background-color: var(--fill-color, gray);
+}
+/* Buttons */
+
+main {
+  margin: 1rem;
+  height: 120vh;
+}
+
+.btn {
+  border-radius: 20px;
+  padding: 5px 15px;
+  font-family: "Ubuntu Mono", monospace;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  outline: 0;
+  border: 0;
+  margin: 0 0.5rem;
+}
+
+.btn-black {
+  background-color: black;
+  color: white;
+}
+.btn-white {
+  background-color: white;
+  color: black;
+}
+.btn-red {
+  background-color: rgb(233, 6, 6);
+  color: white;
+  --fill-color: rgb(158, 9, 9);
+}
+.btn-gray {
+  background-color: rgb(224, 224, 224);
+  color: black;
+  --fill-color: rgb(255, 255, 255);
+}
+
+.btn-facebook {
+  background-color: rgb(4, 142, 255);
+  color: white;
+  --fill-color: rgb(9, 114, 201);
+}
+.btn-darkend {
+  --fill-color: rgb(175, 175, 175);
+}
+
+.log-box-container {
+  background-color: rgba(33, 25, 34, 0.5);
+  position: fixed;
+  z-index: 2;
+  height: 100vh;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.log-box {
+  background-color: white;
+  color: black;
+  padding: 3rem;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
+.log-box img {
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+.log-box h1 {
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+.log-box p {
+  margin-bottom: 1rem;
+}
+.log-box button {
+  width: 20rem;
+  height: 2.5rem;
+  margin: 0.2rem 0;
+}
+.log-box .absoluted {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  width: 10rem;
+}
+.log-box input {
+  border-radius: 5px;
+  border: 1px solid black;
+  padding: 10px 12px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  width: 100%;
+}
+.log-box input:focus,
+.log-box input:active {
+  border-color: red;
+}
+.log-box .error-text {
+  color: red;
+  align-self: start;
+}
+.log-box .gender-box {
+  align-self: flex-start;
+  border: 1px solid black;
+  border-radius: 5px;
+  width: 100%;
+  padding: 1rem;
+}
+.log-box .gender-box p {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.log-box .row {
+  display: flex;
+  width: 100%;
+  margin: 0 0 0.5rem 0.5rem;
+}
+.log-box input[type="radio"] {
+  width: unset;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+.log-box label {
+  cursor: pointer;
+}
+.log-box select {
+  width: 100%;
+  margin: 0.5rem 0;
+  background-color: white;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+.log-box h3 {
+  margin: 0.5rem 0;
+}
+.log-box .started {
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+}
+.log-box .btn-social {
+  width: unset !important;
+  border-radius: 5px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  width: 100% !important;
+  display: flex;
+  align-items: center;
 
-.App-link {
-  color: #61dafb;
+  text-align: left;
 }
+.log-box .btn-social svg {
+  font-size: 2rem;
+  margin-right: 0.5rem;
+}
+.log-box span {
+  text-align: center;
+  width: 80%;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: rgb(87, 86, 86);
+}
+.log-box hr {
+  width: 80%;
+  margin-bottom: 0.5rem;
+}
+/*
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+font-family: 'Ubuntu Mono', monospace;
+font-family: 'Roboto', sans-serif;
+font-family: 'Arya', sans-serif;
+
+*/
