@@ -1,12 +1,18 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
+
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
 const userRouter = require("./controllers/userRouter");
 const config = require("./utils/config");
 const mongoose = require("mongoose");
+const cors = require("cors");
+app.use(cors());
+app.all("/*", function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
 
 mongoose
   .connect(config.MonogDB_URI, {
@@ -19,7 +25,6 @@ mongoose
     console.log(err);
   });
 
-app.use(cors());
 app.use(bodyParser.json());
 app.use(
   session({

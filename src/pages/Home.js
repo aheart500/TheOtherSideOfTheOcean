@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./css/Home.css";
 import Logbox from "../components/Logbox";
 import axios from "axios";
+import Modal from "../components/Modal";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const [logged, setLogged] = useState(false);
   const [loading, setLoading] = useState(true);
-  if (!logged) {
+  const [logoutModal, setLogoutModal] = useState(false);
+  if (!logged || logoutModal || loading) {
     document.body.style.overflow = "hidden";
   } else {
     document.body.style.overflow = "unset";
@@ -16,7 +19,10 @@ const Home = () => {
       .get("/user/logout")
       .then(response => response.data)
       .then(respone => {
-        if (respone.message === "logged out") setLogged(false);
+        if (respone.message === "logged out") {
+          setLogoutModal(false);
+          setLogged(false);
+        }
       })
       .catch(err => {
         console.log(err);
@@ -40,11 +46,14 @@ const Home = () => {
       });
   }, []);
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
   return (
     <>
       {!logged ? <Logbox /> : null}
+      {logoutModal ? (
+        <Modal exit={() => setLogoutModal(false)} logout={handleLogout} />
+      ) : null}
       <main>
         <button type="button" className="btn btn-white pulse">
           Return Back
@@ -58,7 +67,7 @@ const Home = () => {
         <button
           type="button"
           className="btn btn-gray fill"
-          onClick={handleLogout}
+          onClick={() => setLogoutModal(true)}
         >
           Log out
         </button>

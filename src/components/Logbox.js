@@ -109,6 +109,14 @@ const Logbox = () => {
     }
     return false;
   };
+  const handelEnter = (e, trigger) => {
+    if (e.keyCode === 13) {
+      if (trigger === "login") return handleLogin();
+      if (trigger === "signup1") return handleSignup1();
+      if (trigger === "signup") return handleSignup();
+      return;
+    }
+  };
   const handleLogin = () => {
     if (formValidation()) return;
     axios
@@ -188,17 +196,39 @@ const Logbox = () => {
         console.log(err);
       });
   };
+  const handleFacebookLogin = () => {
+    axios
+      .get("/user/login/facebook", {
+        headers: {
+          "Allow-Control-Access-origin": "*"
+        }
+      })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const handleGoogleLogin = () => {
+    console.log("logged by google");
+  };
   const ThirdParty = () => {
     return (
       <>
         <h3>OR</h3>
-        <button type="button" className="btn btn-facebook btn-social fill">
+        <button
+          type="button"
+          className="btn btn-facebook btn-social fill"
+          onClick={handleFacebookLogin}
+        >
           <FaFacebook />
           Continue with Facebook
         </button>
         <button
           type="button"
           className="btn btn-gray btn-social btn-darkend fill"
+          onClick={handleGoogleLogin}
         >
           <FaGooglePlusG />
           Continue with Google
@@ -239,6 +269,7 @@ const Logbox = () => {
               name="email"
               value={email}
               onChange={handleInput}
+              onKeyDown={e => handelEnter(e, "login")}
             />
             {emailError && <p className="error-text">{emailError}</p>}
             <input
@@ -247,6 +278,7 @@ const Logbox = () => {
               value={password}
               name="password"
               onChange={handleInput}
+              onKeyDown={e => handelEnter(e, "login")}
             />
             {passwordError && <p className="error-text">{passwordError}</p>}
             <h4 className="started">Forgot your password?</h4>
@@ -283,6 +315,7 @@ const Logbox = () => {
               value={email}
               name="email"
               onChange={handleInput}
+              onKeyDown={e => handelEnter(e, "signup1")}
             />
             {emailError && <p className="error-text">{emailError}</p>}
             <input
@@ -291,6 +324,7 @@ const Logbox = () => {
               value={password}
               name="password"
               onChange={handleInput}
+              onKeyDown={e => handelEnter(e, "signup1")}
             />
             {passwordError && <p className="error-text">{passwordError}</p>}
             <input
@@ -299,6 +333,7 @@ const Logbox = () => {
               value={password2}
               name="password2"
               onChange={handleInput}
+              onKeyDown={e => handelEnter(e, "signup1")}
             />
             {password2Error && <p className="error-text">{password2Error}</p>}
             <button
@@ -334,9 +369,13 @@ const Logbox = () => {
               value={name}
               placeholder="Your name"
               onChange={handleInput}
+              onKeyDown={e => handelEnter(e, "signup")}
             />
             {nameError && <p className="error-text">{nameError}</p>}
-            <div className="gender-box">
+            <div
+              className="gender-box"
+              onKeyDown={e => handelEnter(e, "signup")}
+            >
               <p>You're a ..</p>
               <div className="row">
                 <input
@@ -368,6 +407,7 @@ const Logbox = () => {
                   value: e.target.value
                 });
               }}
+              onKeyDown={e => handelEnter(e, "signup")}
             />
             {countryError && <p className="error-text">{countryError}</p>}
             <button

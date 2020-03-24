@@ -1,8 +1,11 @@
 const userRouter = require("express").Router();
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const config = require("../utils/config");
+
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -31,6 +34,39 @@ passport.use(
           return done(null, false, { message: "Incorrect password." });
         }
         return done(null, user);
+      });
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: config.FACEBOOK.clientId,
+      clientSecret: config.FACEBOOK.clientSecret,
+      callbackURL: "/user/login/facebook/callback",
+      profileFields: ["email", "gender", "location", "name", "profile_pic"]
+    },
+    function(accessToken, refreshToken, profile, cb) {
+      User.findOne({ email: profile.email }, (err, user) => {
+        if (err) {
+          return cb(err);
+        }
+        if (!user) {
+          const user = new User({
+            email: profile.email,
+            name: profile.name,
+            country: profile.location || "",
+            provider: "facebook",
+            userImage: profile["profile_pic"] || "",
+            images: []
+          });
+          user.save(err => {
+            if (err) console.log(err);
+            return cb(err, user);
+          });
+        }
+        return cb(err, user, { message: "AlreadyIn" });
       });
     }
   )
@@ -78,4 +114,16 @@ userRouter.post("/register", async (req, res, next) => {
   }
 });
 
+userRouter.get("/login/facebook", passport.authenticate("facebook"));
+
+userRouter.get("/login/facebook/callback", (req, res) => {
+  passport.authenticate("facebook", (err, user, info) => {
+    if (err) return console.log(err);
+    if (!user) return res.json(info);
+    req.login(user, err => {
+      if (err) return console.log(err);
+      return res.json(user);
+    });
+  })(req, res);
+});
 module.exports = userRouter;
