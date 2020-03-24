@@ -2,6 +2,7 @@ const userRouter = require("express").Router();
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
+const GoogleStartegy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const config = require("../utils/config");
@@ -30,6 +31,12 @@ passport.use(
         if (!user) {
           return done(null, false, { message: "Incorrect username." });
         }
+        if (user.provider === "facebook") {
+          return done(null, false, { message: "signedFace" });
+        }
+        if (user.provider === "google") {
+          return done(null, false, { message: "signedGoogle" });
+        }
         if (!(await user.validPassword(password))) {
           return done(null, false, { message: "Incorrect password." });
         }
@@ -45,27 +52,62 @@ passport.use(
       clientID: config.FACEBOOK.clientId,
       clientSecret: config.FACEBOOK.clientSecret,
       callbackURL: "/user/login/facebook/callback",
-      profileFields: ["email", "gender", "location", "name", "profile_pic"]
+      profileFields: ["email", "photos", "gender", "displayName"]
     },
     function(accessToken, refreshToken, profile, cb) {
-      User.findOne({ email: profile.email }, (err, user) => {
+      User.findOne({ email: profile.emails[0].value }, async (err, user) => {
         if (err) {
           return cb(err);
         }
         if (!user) {
-          const user = new User({
-            email: profile.email,
-            name: profile.name,
-            country: profile.location || "",
+          const newUser = new User({
+            email: profile.emails[0].value,
+            name: profile.displayName,
+            country: "",
+            gender: profile.gender || "",
             provider: "facebook",
-            userImage: profile["profile_pic"] || "",
+            userImage: profile.photos[0].value || "",
             images: []
           });
-          user.save(err => {
-            if (err) console.log(err);
-            return cb(err, user);
+          await newUser.save(err => {
+            if (err) cb(err);
           });
+          return cb(err, newUser);
         }
+
+        return cb(err, user, { message: "AlreadyIn" });
+      });
+    }
+  )
+);
+passport.use(
+  new GoogleStartegy(
+    {
+      clientID: config.GOOGLE.clientId,
+      clientSecret: config.GOOGLE.clientSecret,
+      callbackURL: "/user/login/google/callback"
+    },
+    function(accessToken, refreshToken, profile, cb) {
+      User.findOne({ email: profile.emails[0].value }, async (err, user) => {
+        if (err) {
+          return cb(err);
+        }
+        if (!user) {
+          const newUser = new User({
+            email: profile.emails[0].value,
+            name: profile.displayName,
+            country: "",
+            gender: profile.gender || "",
+            provider: "google",
+            userImage: profile.photos[0].value || "",
+            images: []
+          });
+          await newUser.save(err => {
+            if (err) cb(err);
+          });
+          return cb(err, newUser);
+        }
+
         return cb(err, user, { message: "AlreadyIn" });
       });
     }
@@ -93,6 +135,13 @@ userRouter.post("/login", (req, res) => {
   })(req, res);
 });
 userRouter.post("/register", async (req, res, next) => {
+  const exisitingUser = await User.findOne({ email: req.body.email });
+  if (exisitingUser) {
+    await req.login(exisitingUser, err => {
+      if (err) return next(err);
+    });
+    return res.status(201).json({ message: "success" });
+  }
   try {
     const newUser = new User({
       email: req.body.email,
@@ -114,7 +163,12 @@ userRouter.post("/register", async (req, res, next) => {
   }
 });
 
-userRouter.get("/login/facebook", passport.authenticate("facebook"));
+userRouter.get(
+  "/login/facebook",
+  passport.authenticate("facebook", {
+    scope: ["email"]
+  })
+);
 
 userRouter.get("/login/facebook/callback", (req, res) => {
   passport.authenticate("facebook", (err, user, info) => {
@@ -122,8 +176,25 @@ userRouter.get("/login/facebook/callback", (req, res) => {
     if (!user) return res.json(info);
     req.login(user, err => {
       if (err) return console.log(err);
-      return res.json(user);
+      return res.redirect("http://localhost:3000");
     });
   })(req, res);
 });
+
+userRouter.get(
+  "/login/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+userRouter.get("/login/google/callback", (req, res) => {
+  passport.authenticate("google", (err, user, info) => {
+    if (err) return console.log(err);
+    if (!user) return res.json(info);
+    req.login(user, err => {
+      if (err) return console.log(err);
+      return res.redirect("http://localhost:3000");
+    });
+  })(req, res);
+});
+
 module.exports = userRouter;

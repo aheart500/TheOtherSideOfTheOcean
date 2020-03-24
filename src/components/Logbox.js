@@ -137,6 +137,22 @@ const Logbox = () => {
             message: "Incorrect email address"
           });
         }
+        if (response.message === "signedFace") {
+          return dispatchForm({
+            type: "error",
+            field: "passwordError",
+            message:
+              "Your email is registered by facebook. Try logging in using facebook below"
+          });
+        }
+        if (response.message === "signedGoogle") {
+          return dispatchForm({
+            type: "error",
+            field: "passwordError",
+            message:
+              "Your email is registered by google, try logging in using google below"
+          });
+        }
         window.location.reload();
       })
       .catch(err => {
@@ -196,43 +212,26 @@ const Logbox = () => {
         console.log(err);
       });
   };
-  const handleFacebookLogin = () => {
-    axios
-      .get("/user/login/facebook", {
-        headers: {
-          "Allow-Control-Access-origin": "*"
-        }
-      })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-  const handleGoogleLogin = () => {
-    console.log("logged by google");
-  };
+
   const ThirdParty = () => {
     return (
       <>
         <h3>OR</h3>
-        <button
-          type="button"
+        <a
+          href="http://localhost:3001/user/login/facebook"
           className="btn btn-facebook btn-social fill"
-          onClick={handleFacebookLogin}
+          target="blank"
         >
           <FaFacebook />
           Continue with Facebook
-        </button>
-        <button
-          type="button"
+        </a>
+        <a
+          href="http://localhost:3001/user/login/google"
           className="btn btn-gray btn-social btn-darkend fill"
-          onClick={handleGoogleLogin}
         >
           <FaGooglePlusG />
           Continue with Google
-        </button>
+        </a>
       </>
     );
   };

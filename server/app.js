@@ -7,12 +7,7 @@ const passport = require("passport");
 const userRouter = require("./controllers/userRouter");
 const config = require("./utils/config");
 const mongoose = require("mongoose");
-const cors = require("cors");
-app.use(cors());
-app.all("/*", function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
+var cors = require("cors");
 
 mongoose
   .connect(config.MonogDB_URI, {
@@ -26,6 +21,8 @@ mongoose
   });
 
 app.use(bodyParser.json());
+
+app.use(express.static("build"));
 app.use(
   session({
     secret: config.SECRET,
@@ -33,6 +30,8 @@ app.use(
     saveUninitialized: false
   })
 );
+app.use(cors());
+
 app.use(passport.initialize());
 app.use(passport.session());
 

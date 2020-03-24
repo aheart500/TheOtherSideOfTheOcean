@@ -6,10 +6,15 @@ const FACEBOOK = {
   clientId: process.env.FACEBOOKID,
   clientSecret: process.env.FACEBOOKSECRET
 };
+const GOOGLE = {
+  clientId: process.env.GOOGLEID,
+  clientSecret: process.env.GOOGLESECRET
+};
 
 module.exports = {
   PORT,
   MonogDB_URI,
   SECRET,
-  FACEBOOK
+  FACEBOOK,
+  GOOGLE
 };

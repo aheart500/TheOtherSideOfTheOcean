@@ -108,6 +108,7 @@ main {
   align-items: center;
   justify-content: center;
   animation: var(--show-up-animation);
+  width: 30rem;
 }
 .log-box img {
   border-radius: 50%;
@@ -149,6 +150,7 @@ main {
 .log-box .error-text {
   color: red;
   align-self: start;
+  width: 80%;
 }
 .log-box .gender-box {
   align-self: flex-start;
@@ -191,13 +193,12 @@ main {
   margin-bottom: 0.5rem;
 }
 .log-box .btn-social {
-  width: unset !important;
   border-radius: 5px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   width: 100% !important;
   display: flex;
   align-items: center;
-
+  margin: 0.5rem 0;
   text-align: left;
 }
 .log-box .btn-social svg {
