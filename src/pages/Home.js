@@ -4,11 +4,12 @@ import Logbox from "../components/Logbox";
 import axios from "axios";
 import Modal from "../components/Modal";
 import Loader from "../components/Loader";
-
+import Message from "../components/Message";
 const Home = () => {
-  const [logged, setLogged] = useState(false);
+  const [logged, setLogged] = useState(true);
   const [loading, setLoading] = useState(true);
   const [logoutModal, setLogoutModal] = useState(false);
+  const [message, setMessage] = useState(false);
   if (!logged || logoutModal || loading) {
     document.body.style.overflow = "hidden";
   } else {
@@ -30,7 +31,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    axios
+    /*     axios
       .get("/user/logged")
       .then(response => response.data)
       .then(data => {
@@ -43,13 +44,23 @@ const Home = () => {
       })
       .catch(err => {
         console.log(err);
-      });
+      }); */
+    setLoading(false);
   }, []);
   if (loading) {
     return <Loader />;
   }
+
   return (
     <>
+      {message ? (
+        <Message
+          message={message.message}
+          actionName={message.actionName}
+          action={message.action}
+          hide={() => setMessage(false)}
+        />
+      ) : null}
       {!logged ? <Logbox /> : null}
       {logoutModal ? (
         <Modal exit={() => setLogoutModal(false)} logout={handleLogout} />
